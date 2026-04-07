@@ -25,6 +25,7 @@ import org.geotools.stac.client.STACClient;
 import org.geotools.stac.client.SearchQuery;
 import org.hortonmachine.gears.io.stac.assets.IHMStacAssetHandler;
 import org.hortonmachine.gears.io.stac.assets.IHMStacAssetRasterHandler;
+import org.hortonmachine.gears.io.stac.assets.handlers.GeotiffHandler;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
@@ -312,7 +313,7 @@ public class HMStacCollection {
                                 DefaultGeographicCRS.WGS84).transform(outputCrs, true);
 
                         roiGeometryFirstAssetCrs = GeometryUtilities.createPolygonFromEnvelope(roiEnvelopeFirstAssetCrs);
-                        firstAssetCRS = CRS.decode("EPSG:" + firstAssetSrid);
+                        firstAssetCRS =outputCrs;
                         cols = latLongRegionMap.getCols();
                         rows = latLongRegionMap.getRows();
 
@@ -339,9 +340,11 @@ public class HMStacCollection {
                             .transform(currentItemCRS, true);
 
 
-                    RegionMap readRegion = RegionMap.fromBoundsAndGrid(roiEnvCurrentAssetCrs.getMinX(), roiEnvCurrentAssetCrs.getMaxX(),
-                            roiEnvCurrentAssetCrs.getMinY(), roiEnvCurrentAssetCrs.getMaxY(), cols, rows);
-                    GridCoverage2D readRaster = rasterHandler.readRaster(readRegion);
+//                    RegionMap readRegion = RegionMap.fromBoundsAndGrid(roiEnvCurrentAssetCrs.getMinX(), roiEnvCurrentAssetCrs.getMaxX(),
+//                            roiEnvCurrentAssetCrs.getMinY(), roiEnvCurrentAssetCrs.getMaxY(), cols, rows);
+//                    GridCoverage2D readRaster = rasterHandler.readRaster(readRegion);
+                    GridCoverage2D readRaster = GeotiffHandler.readCogOnRegion(asset.getAssetNode().get("href").textValue(), roiEnvCurrentAssetCrs.getMaxY(),
+                            roiEnvCurrentAssetCrs.getMinY(), roiEnvCurrentAssetCrs.getMinX(), roiEnvCurrentAssetCrs.getMaxX());
                     outRaster.mapRaster(null, HMRaster.fromGridCoverage(readRaster), mergeMode);
                     readRaster.dispose(true);
                 }

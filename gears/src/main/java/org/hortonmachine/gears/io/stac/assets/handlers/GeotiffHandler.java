@@ -192,7 +192,6 @@ public class GeotiffHandler implements IHMStacAssetRasterHandler {
 	 * This method is counterintuitive but necessary, as the geotools reader alone does nto seem to work properly 
 	 * with the COG reader when reading out ranges. 
 	 * TODO check what we are doing wrong with geotools.
-	 * 
 	 * @param assetUrl the url of the geotiff asset to read.
 	 * @param north the north coordinate of the region to read.
 	 * @param south the south coordinate of the region to read.
@@ -202,13 +201,13 @@ public class GeotiffHandler implements IHMStacAssetRasterHandler {
 	 * @throws Exception
 	 */	
 	public static GridCoverage2D readCogOnRegion(
-	        String url,
+			String assetUrl,
 	        double north,
 	        double south,
 	        double west,
 	        double east) throws Exception {
 
-	    BasicAuthURI cogUri = new BasicAuthURI(url, false);
+	    BasicAuthURI cogUri = new BasicAuthURI(assetUrl, false);
 
 	    HttpRangeReader rangeReader =
 	            new HttpRangeReader(cogUri.getUri(), CogImageReadParam.DEFAULT_HEADER_LENGTH);
